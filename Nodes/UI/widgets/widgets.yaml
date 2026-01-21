@@ -1,0 +1,29 @@
+Name: widgets
+Type: FolderType
+Children:
+- Name: DateAndTime
+  Id: g=928c495c7093d598e387b4e3dd32f5c9
+  Supertype: DateTimePicker
+  ReferenceType: HasComponent
+  Children:
+  - Name: Value
+    Type: BaseDataVariableType
+    DataType: DateTime
+  - Name: LeftMargin
+    Type: BaseVariableType
+    DataType: Size
+    ModellingRule: Optional
+    Value: 13.0
+  - Name: TopMargin
+    Type: BaseVariableType
+    DataType: Size
+    ModellingRule: Optional
+    Value: 25.0
+  - Name: Width
+    Type: BaseVariableType
+    DataType: Size
+    ModellingRule: Optional
+    Value: 147.0
+  - Name: setup
+    Type: NetLogic
+- File: ChangeUserForm/ChangeUserForm.yaml

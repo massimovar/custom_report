@@ -1,0 +1,42 @@
+Name: Translations
+Type: TranslationsCategoryFolder
+Children:
+- Name: LocalizationDictionary1
+  Type: LocalizationDictionary
+  DataType: String
+  ValueRank: OneOrMoreDimensions
+  ArrayDimensions: [0,0]
+  Value: 
+   {
+    "Type": 12,
+    "Dimensions": [27,3],
+    "Body": [
+     "","en-US","it-IT",
+     "Acked","Acked","Riconosciuto",
+     "SourceName","Source Variable","Variabile sorgente",
+     "Timestamp","Timestamp","Timestamp",
+     "Confirmed","Confirmed","Confermato",
+     "Name","Name","Nome",
+     "Message","Message","Messaggio",
+     "Active","Active","Attivo",
+     "Severity","Severity","Gravità",
+     "Confirm password","Confirm password","Conferma password",
+     "Password","Password","Password",
+     "Change User","Change User","Cambia utente",
+     "Old password","Old password","Vecchia password",
+     "New password","New password","Nuova password",
+     "Change password","Change password","Cambia password",
+     "ChangePasswordFormUnsupportedOperationMessage","Unsupported operation","Operazione non supportata",
+     "Your password has expired. Please enter a new one.","Your password has expired. Please enter a new one.","Password scaduta. Immetterne una nuova.",
+     "ChangeUserFormOutputSuccessMessage","Change User successful","Cambio utente riuscito",
+     "ChangeUserFormOutputErrorMessage","Authentication failed","Autenticazione fallita",
+     "ChangeUserFormOutputPasswordExpired","Password expired","Password scaduta",
+     "ChangePasswordFormSuccessMessage","Password changed successfully","Password cambiata con successo",
+     "ChangePasswordFormWrongOldPasswordMessage","Wrong old password","Vecchia password errata",
+     "ChangePasswordFormPasswordAlreadyUsedMessage","Password already used","Password già utilizzata",
+     "ChangePasswordFormPasswordChangedTooRecentlyMessage","Password changed too recently","Password cambiata troppo recentemente",
+     "ChangePasswordFormPasswordTooShortMessage","Password too short","Password troppo corta",
+     "ChangePasswordFormUserNotFoundMessage","User not found","Utente non trovato",
+     "ChangePasswordFormPasswordMismatchMessage","Passwords do not match","Le password non coincidono"
+    ]
+   }

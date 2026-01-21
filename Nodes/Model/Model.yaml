@@ -1,0 +1,12 @@
+Name: Model
+Type: ModelCategoryFolder
+Children:
+- Name: al1
+  Type: BaseDataVariableType
+  DataType: Boolean
+- Name: auditVar
+  Type: BaseDataVariableType
+  DataType: Int32
+- Name: al2
+  Type: BaseDataVariableType
+  DataType: Boolean

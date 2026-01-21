@@ -1,0 +1,160 @@
+Name: Alarms
+Id: g=3293e7cd8de0bb06cc725e017a984470
+Type: AlarmsCategoryFolder
+Children:
+- Name: DigitalAlarm1
+  Id: g=a57e99a417efee410070070ca9e96b21
+  Type: OffNormalAlarmController
+  Children:
+  - Name: NormalStateValue
+    Id: g=54bc789d61278070020a0a86c684eb02
+    Type: BaseDataVariableType
+    DataType: Double
+  - Name: InputValue
+    Id: g=db6dea593970e5bee7aa012ea48069b0
+    Type: BaseDataVariableType
+    DataType: Double
+    Children:
+    - Name: DynamicLink
+      Id: g=3bd41ab6b2ad7b4bb1c3e31955a1a1b2
+      Type: DynamicLink
+      DataType: NodePath
+      Value: "../../../Model/al1"
+      Children:
+      - Name: Mode
+        Id: g=b658268bbf28b4559423843215b0047c
+        Type: BaseVariableType
+        DataType: DynamicLinkMode
+        Value: 2
+  - Name: LastEvent
+    Id: g=943676f6857c23635254ffd1bd4360bf
+    Type: BaseDataVariableType
+    DataType: BaseDataType
+    ValueRank: OneDimension
+    ArrayDimensions: [0]
+  - Class: Reference
+    Target: ns=15;i=81
+    Direction: Forward
+  - Class: Reference
+    Target: ns=15;i=82
+    Direction: Forward
+  - Class: Reference
+    Target: ns=15;i=83
+    Direction: Forward
+  - Class: Reference
+    Target: ns=15;i=130
+    Direction: Forward
+  - Class: Reference
+    Target: ns=15;i=135
+    Direction: Forward
+  - Class: Reference
+    Target: ns=15;i=132
+    Direction: Forward
+  - Class: Reference
+    Target: ns=15;i=146
+    Direction: Forward
+  - Class: Reference
+    Target: ns=15;i=148
+    Direction: Forward
+  - Class: Reference
+    Target: ns=15;i=150
+    Direction: Forward
+  - Class: Reference
+    Target: ns=15;i=152
+    Direction: Forward
+  - Class: Reference
+    Target: ns=15;i=154
+    Direction: Forward
+  - Name: AutoAcknowledge
+    Id: g=ad194797f8e84713876665c69265e6ef
+    Type: BaseDataVariableType
+    DataType: Boolean
+    Value: true
+  - Name: AutoConfirm
+    Id: g=1213826ebed17c31cf524b4c263b341c
+    Type: BaseDataVariableType
+    DataType: Boolean
+    Value: true
+  - Name: Message
+    Id: g=b7c4ce34ab638f62ee4bbb3e56384f1b
+    Type: BaseDataVariableType
+    DataType: LocalizedText
+    Value: {"LocaleId":"it-IT","Text":"alarm 1 message"}
+- Name: DigitalAlarm2
+  Id: g=17b852ba44806868b1fa35d98b5b8cae
+  Type: OffNormalAlarmController
+  Children:
+  - Name: NormalStateValue
+    Id: g=5577c89c1b22e78113bbff3a16e9aac4
+    Type: BaseDataVariableType
+    DataType: Double
+  - Name: InputValue
+    Id: g=4fce753e6ced7c53ccb10b85a0fe501f
+    Type: BaseDataVariableType
+    DataType: Double
+    Children:
+    - Name: DynamicLink
+      Id: g=c4865e9157c34815805159bcabce9770
+      Type: DynamicLink
+      DataType: NodePath
+      Value: "../../../Model/al2"
+      Children:
+      - Name: Mode
+        Id: g=4c56b6227f29a094d068923c31de516e
+        Type: BaseVariableType
+        DataType: DynamicLinkMode
+        Value: 2
+  - Name: LastEvent
+    Id: g=2794fe18839560a61022671b203765bb
+    Type: BaseDataVariableType
+    DataType: BaseDataType
+    ValueRank: OneDimension
+    ArrayDimensions: [0]
+  - Class: Reference
+    Target: ns=15;i=81
+    Direction: Forward
+  - Class: Reference
+    Target: ns=15;i=82
+    Direction: Forward
+  - Class: Reference
+    Target: ns=15;i=83
+    Direction: Forward
+  - Class: Reference
+    Target: ns=15;i=130
+    Direction: Forward
+  - Class: Reference
+    Target: ns=15;i=135
+    Direction: Forward
+  - Class: Reference
+    Target: ns=15;i=132
+    Direction: Forward
+  - Class: Reference
+    Target: ns=15;i=146
+    Direction: Forward
+  - Class: Reference
+    Target: ns=15;i=148
+    Direction: Forward
+  - Class: Reference
+    Target: ns=15;i=150
+    Direction: Forward
+  - Class: Reference
+    Target: ns=15;i=152
+    Direction: Forward
+  - Class: Reference
+    Target: ns=15;i=154
+    Direction: Forward
+  - Name: AutoAcknowledge
+    Id: g=82b8d185e405f79e9942d3110c96891a
+    Type: BaseDataVariableType
+    DataType: Boolean
+    Value: true
+  - Name: AutoConfirm
+    Id: g=4461d34a31343ad781ad0f476a688af5
+    Type: BaseDataVariableType
+    DataType: Boolean
+    Value: true
+  - Name: Message
+    Id: g=5bf2db9bbac0346014580452c6a39c83
+    Type: BaseDataVariableType
+    DataType: LocalizedText
+    Value: {"LocaleId":"it-IT","Text":"alarm 2 message"}
