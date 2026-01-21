@@ -2,36 +2,99 @@ Name: Alarms
 Id: g=3293e7cd8de0bb06cc725e017a984470
 Type: AlarmsCategoryFolder
 Children:
-- Name: DigitalAlarm1
-  Id: g=a57e99a417efee410070070ca9e96b21
-  Type: OffNormalAlarmController
+- Name: LastTechAlarm
+  Id: g=8edccbfaf6a9fdbf894fcb12ec730c7f
+  Supertype: OffNormalAlarmController
   Children:
+  - Class: Reference
+    Target: ns=15;i=81
+    Direction: Forward
+  - Class: Reference
+    Target: ns=15;i=82
+    Direction: Forward
+  - Class: Reference
+    Target: ns=15;i=83
+    Direction: Forward
+  - Class: Reference
+    Target: ns=15;i=130
+    Direction: Forward
+  - Class: Reference
+    Target: ns=15;i=135
+    Direction: Forward
+  - Class: Reference
+    Target: ns=15;i=132
+    Direction: Forward
+  - Class: Reference
+    Target: ns=15;i=146
+    Direction: Forward
+  - Class: Reference
+    Target: ns=15;i=148
+    Direction: Forward
+  - Class: Reference
+    Target: ns=15;i=150
+    Direction: Forward
+  - Class: Reference
+    Target: ns=15;i=152
+    Direction: Forward
+  - Class: Reference
+    Target: ns=15;i=154
+    Direction: Forward
   - Name: NormalStateValue
-    Id: g=54bc789d61278070020a0a86c684eb02
+    Id: g=29300486c7936d9a2bc0826a52346e3c
     Type: BaseDataVariableType
     DataType: Double
   - Name: InputValue
-    Id: g=db6dea593970e5bee7aa012ea48069b0
+    Id: g=6974841a099656ac211fe9009e4832b9
     Type: BaseDataVariableType
     DataType: Double
     Children:
     - Name: DynamicLink
-      Id: g=3bd41ab6b2ad7b4bb1c3e31955a1a1b2
+      Id: g=9708edc1515bafccefca5df680e129bf
       Type: DynamicLink
       DataType: NodePath
       Value: "../../../Model/al1"
       Children:
       - Name: Mode
-        Id: g=b658268bbf28b4559423843215b0047c
+        Id: g=bef751320fe18f6312d17146ff6b0f59
         Type: BaseVariableType
         DataType: DynamicLinkMode
+        ModellingRule: Optional
         Value: 2
   - Name: LastEvent
-    Id: g=943676f6857c23635254ffd1bd4360bf
+    Id: g=eaed2a385bc1fd8572c9b2270151fdee
     Type: BaseDataVariableType
     DataType: BaseDataType
     ValueRank: OneDimension
     ArrayDimensions: [0]
+  - Name: AutoAcknowledge
+    Id: g=9ab8c6c844f95fe349e4be2af4981ed6
+    Type: BaseDataVariableType
+    DataType: Boolean
+    ModellingRule: Optional
+    Value: true
+  - Name: AutoConfirm
+    Id: g=183d49849e38b5071ff92705cb3cb964
+    Type: BaseDataVariableType
+    DataType: Boolean
+    ModellingRule: Optional
+    Value: true
+  - Name: Message
+    Id: g=63673008f025d986d6ab3d3fb786bee5
+    Type: BaseDataVariableType
+    DataType: LocalizedText
+    ModellingRule: Optional
+    Value: {"LocaleId":"it-IT","Text":"alarm 1 message"}
+  - Name: Device
+    Id: g=7cf28a74ebb3d61a4ab00280128921eb
+    Type: BaseDataVariableType
+    DataType: String
+  - Class: Reference
+    Type: GeneratesEvent
+    Target: g=81c3a99ca11313539e3664a4582f0d19
+- Name: LastTechAlarm1
+  Id: g=a478461f905cbd49ffc0f47e6bb3e4ee
+  Type: LastTechAlarm
+  Children:
   - Class: Reference
     Target: ns=15;i=81
     Direction: Forward
@@ -65,51 +128,35 @@ Children:
   - Class: Reference
     Target: ns=15;i=154
     Direction: Forward
-  - Name: AutoAcknowledge
-    Id: g=ad194797f8e84713876665c69265e6ef
-    Type: BaseDataVariableType
-    DataType: Boolean
-    Value: true
-  - Name: AutoConfirm
-    Id: g=1213826ebed17c31cf524b4c263b341c
-    Type: BaseDataVariableType
-    DataType: Boolean
-    Value: true
-  - Name: Message
-    Id: g=b7c4ce34ab638f62ee4bbb3e56384f1b
-    Type: BaseDataVariableType
-    DataType: LocalizedText
-    Value: {"LocaleId":"it-IT","Text":"alarm 1 message"}
-- Name: DigitalAlarm2
-  Id: g=17b852ba44806868b1fa35d98b5b8cae
-  Type: OffNormalAlarmController
-  Children:
   - Name: NormalStateValue
-    Id: g=5577c89c1b22e78113bbff3a16e9aac4
+    Id: g=d289161b8c42f8af76e144d0717cea95
     Type: BaseDataVariableType
     DataType: Double
   - Name: InputValue
-    Id: g=4fce753e6ced7c53ccb10b85a0fe501f
+    Id: g=55d04cabe2da6b66a5b6c97a83ed382d
     Type: BaseDataVariableType
     DataType: Double
     Children:
     - Name: DynamicLink
-      Id: g=c4865e9157c34815805159bcabce9770
+      Id: g=1fcff5680f78b09a35133848fbcc9da3
       Type: DynamicLink
       DataType: NodePath
-      Value: "../../../Model/al2"
-      Children:
-      - Name: Mode
-        Id: g=4c56b6227f29a094d068923c31de516e
-        Type: BaseVariableType
-        DataType: DynamicLinkMode
-        Value: 2
+      Value: "../../../Model/al1"
   - Name: LastEvent
-    Id: g=2794fe18839560a61022671b203765bb
+    Id: g=dc084de683778de43155eb014c3b5980
     Type: BaseDataVariableType
     DataType: BaseDataType
     ValueRank: OneDimension
     ArrayDimensions: [0]
+  - Name: Device
+    Id: g=417a1411ad6d4cfde2dcf1de1be975ac
+    Type: BaseDataVariableType
+    DataType: String
+    Value: "D1"
+- Name: LastTechAlarm2
+  Id: g=8d98cbe4ad08860d6c3b93cc5f6fe122
+  Type: LastTechAlarm
+  Children:
   - Class: Reference
     Target: ns=15;i=81
     Direction: Forward
@@ -143,18 +190,28 @@ Children:
   - Class: Reference
     Target: ns=15;i=154
     Direction: Forward
-  - Name: AutoAcknowledge
-    Id: g=82b8d185e405f79e9942d3110c96891a
+  - Name: NormalStateValue
+    Id: g=6b5a659936b4cf4ce9463ef00201518a
     Type: BaseDataVariableType
-    DataType: Boolean
-    Value: true
-  - Name: AutoConfirm
-    Id: g=4461d34a31343ad781ad0f476a688af5
+    DataType: Double
+  - Name: InputValue
+    Id: g=275c59837173285582210167ff0797a2
     Type: BaseDataVariableType
-    DataType: Boolean
-    Value: true
-  - Name: Message
-    Id: g=5bf2db9bbac0346014580452c6a39c83
+    DataType: Double
+    Children:
+    - Name: DynamicLink
+      Id: g=211abbc35d5fa89b8053c44ada5208a0
+      Type: DynamicLink
+      DataType: NodePath
+      Value: "../../../Model/al1"
+  - Name: LastEvent
+    Id: g=4c3003cdc9e8d115ec6ca5f9c0bea30c
     Type: BaseDataVariableType
-    DataType: LocalizedText
-    Value: {"LocaleId":"it-IT","Text":"alarm 2 message"}
+    DataType: BaseDataType
+    ValueRank: OneDimension
+    ArrayDimensions: [0]
+  - Name: Device
+    Id: g=5c286bbde911e45a68d159893db40c2b
+    Type: BaseDataVariableType
+    DataType: String
+    Value: "D2"

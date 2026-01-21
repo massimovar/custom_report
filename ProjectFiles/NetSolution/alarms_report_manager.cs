@@ -30,8 +30,8 @@ using MigraDocVerticalAlignment = MigraDoc.DocumentObjectModel.Tables.VerticalAl
 #endregion
 
 /// <summary>
-/// Alarm Report Generator for FTOptix
-/// Generates PDF reports from alarm history data stored in EmbeddedDatabase1.AlarmsEventLogger1
+/// Generates PDF alarm reports from EmbeddedDatabase1.AlarmsEventLogger1.
+/// Uses MigraDoc/PDFsharp for PDF generation with locale-aware message columns.
 /// </summary>
 public class alarms_report_manager : BaseNetLogic
 {
@@ -65,19 +65,21 @@ public class alarms_report_manager : BaseNetLogic
 
     public override void Start()
     {
-        // Enable System.Drawing support for PDFsharp/MigraDoc on .NET Core/.NET 5+
+        // Required for PDFsharp on .NET Core/.NET 5+
         AppContext.SetSwitch("System.Drawing.EnableUnixSupport", true);
-        
-        // Register CodePages encoding provider for Windows-1252 support (required by PDFsharp)
         Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
         
-        // Initialize the store reference
+        // Initialize store and configuration
         _store = Project.Current.Get<Store>("DataStores/EmbeddedDatabase1");
-        
-        // Set default values - these can be overridden via NetLogic variables
         _machineName = GetVariableValueOrDefault("MachineName", "Machine Name");
-        _customerLogoPath = GetVariableValueOrDefault("CustomerLogoPath", "%PROJECTDIR&%/imgs/logo1.svg");
-        _lastLogoPath = GetVariableValueOrDefault("LastLogoPath", "%PROJECTDIR&%/imgs/logo2.svg");
+        
+        // Logo paths - NOTE: PDFsharp only supports PNG, JPEG, BMP, GIF (NOT SVG)
+        _customerLogoPath = GetVariableValueOrDefault("CustomerLogoPath", ResourceUri.FromProjectRelativePath("logos/logo1.png").Uri);
+        _lastLogoPath = GetVariableValueOrDefault("LastLogoPath", ResourceUri.FromProjectRelativePath("logos/logo2.png").Uri);
+        
+        // Log resolved paths for debugging
+        Log.Info("AlarmReport.Init", $"Customer logo: {GetAbsolutePath(_customerLogoPath)}");
+        Log.Info("AlarmReport.Init", $"Last logo: {GetAbsolutePath(_lastLogoPath)}");
         
         Log.Info("AlarmReport.Init", "Alarm Report Manager initialized");
     }
@@ -90,10 +92,8 @@ public class alarms_report_manager : BaseNetLogic
     #region Public Methods (Exported)
 
     /// <summary>
-    /// Generates the alarm report PDF with DateTime parameters directly
+    /// Generates PDF alarm report for the specified date range.
     /// </summary>
-    /// <param name="startDate">Start date for the filter</param>
-    /// <param name="endDate">End date for the filter</param>
     [ExportMethod]
     public void GenerateAlarmsReportWithDates(DateTime startDate, DateTime endDate)
     {
@@ -107,10 +107,7 @@ public class alarms_report_manager : BaseNetLogic
         }
     }
 
-    /// <summary>
-    /// Sets the customer logo path for the report header
-    /// </summary>
-    /// <param name="logoPath">Path to the customer logo image</param>
+    /// <summary>Sets the customer logo path (left side of header).</summary>
     [ExportMethod]
     public void SetCustomerLogo(string logoPath)
     {
@@ -118,10 +115,7 @@ public class alarms_report_manager : BaseNetLogic
         Log.Info("AlarmReport.Config", $"Customer logo path set to: {logoPath}");
     }
 
-    /// <summary>
-    /// Sets the Last logo path for the report header
-    /// </summary>
-    /// <param name="logoPath">Path to the Last logo image</param>
+    /// <summary>Sets the Last logo path (right side of header).</summary>
     [ExportMethod]
     public void SetLastLogo(string logoPath)
     {
@@ -129,10 +123,7 @@ public class alarms_report_manager : BaseNetLogic
         Log.Info("AlarmReport.Config", $"Last logo path set to: {logoPath}");
     }
 
-    /// <summary>
-    /// Sets the machine name for the report header
-    /// </summary>
-    /// <param name="machineName">Machine name to display in the report</param>
+    /// <summary>Sets the machine name displayed in the report header.</summary>
     [ExportMethod]
     public void SetMachineName(string machineName)
     {
@@ -144,35 +135,25 @@ public class alarms_report_manager : BaseNetLogic
 
     #region Private Methods
 
-    /// <summary>
-    /// Main report generation logic
-    /// </summary>
+    /// <summary>Orchestrates report generation: fetch data, create document, save PDF.</summary>
     private void GenerateReport(DateTime startDate, DateTime endDate)
     {
-        Log.Info("AlarmReport.Generate", $"Generating alarm report from {startDate} to {endDate}");
+        Log.Info("AlarmReport.Generate", $"Generating report from {startDate} to {endDate}");
         
-        // Fetch alarm data from database
         var alarmData = FetchAlarmData(startDate, endDate);
-        
         if (alarmData == null || alarmData.Count == 0)
         {
             Log.Warning("AlarmReport.Generate", "No alarm data found for the specified date range");
-            // Still generate report with empty table
         }
         
-        // Create the PDF document
         Document document = CreateDocument(startDate, endDate, alarmData);
-        
-        // Render and save the PDF
         string outputPath = GetOutputPath(startDate, endDate);
         SaveDocument(document, outputPath);
         
-        Log.Info("AlarmReport.Generate", $"Report generated successfully: {outputPath}");
+        Log.Info("AlarmReport.Generate", $"Report saved: {outputPath}");
     }
 
-    /// <summary>
-    /// Fetches alarm data from the EmbeddedDatabase1.AlarmsEventLogger1 table
-    /// </summary>
+    /// <summary>Fetches alarm records from AlarmsEventLogger1 within the date range.</summary>
     private List<AlarmRecord> FetchAlarmData(DateTime startDate, DateTime endDate)
     {
         var alarmRecords = new List<AlarmRecord>();
@@ -190,102 +171,38 @@ public class alarms_report_manager : BaseNetLogic
                 return alarmRecords;
             }
             
-            // First, let's query all data to debug - check what's in the table
-            Object[,] debugResultSet;
-            String[] debugHeader;
-            string debugQuery = "SELECT * FROM AlarmsEventLogger1 LIMIT 5";
-            
-            try
-            {
-                _store.Query(debugQuery, out debugHeader, out debugResultSet);
-                if (debugHeader != null && debugHeader.Length > 0)
-                {
-                    Log.Info("AlarmReport.Query", $"Available columns in AlarmsEventLogger1: {string.Join(", ", debugHeader)}");
-                    if (debugResultSet != null && debugResultSet.GetLength(0) > 0)
-                    {
-                        Log.Info("AlarmReport.Query", $"Table has {debugResultSet.GetLength(0)} sample rows");
-                        
-                        // Log the first row's LocalTime value to see the actual format
-                        int ltIdx = Array.IndexOf(debugHeader, "LocalTime");
-                        if (ltIdx >= 0 && debugResultSet[0, ltIdx] != null)
-                        {
-                            var sampleLocalTime = debugResultSet[0, ltIdx];
-                            Log.Info("AlarmReport.Query", $"Sample LocalTime value: '{sampleLocalTime}' (Type: {sampleLocalTime.GetType().Name})");
-                        }
-                    }
-                    else
-                    {
-                        Log.Warning("AlarmReport.Query", "Table AlarmsEventLogger1 is EMPTY - no rows found");
-                    }
-                }
-            }
-            catch (Exception debugEx)
-            {
-                Log.Warning("AlarmReport.Query", $"Debug query failed: {debugEx.Message}");
-            }
-            
-            // Log filter parameters
-            Log.Info("AlarmReport.Query", $"Filter Start: {startDate} | Filter End: {endDate}");
-            
-            // Query WITHOUT date filter first to get total count
-            Object[,] countResultSet;
-            String[] countHeader;
-            string countQuery = "SELECT COUNT(*) as TotalCount FROM AlarmsEventLogger1";
-            _store.Query(countQuery, out countHeader, out countResultSet);
-            if (countResultSet != null && countResultSet.GetLength(0) > 0)
-            {
-                Log.Info("AlarmReport.Query", $"Total rows in table (no filter): {countResultSet[0, 0]}");
-            }
-            
-            // Build the query using LocalTime with proper date format
-            // Database uses ISO 8601 format with T separator: 2026-01-21T14:32:10.1762615
+            // Format dates as ISO 8601 with T separator (database format)
             string startDateStr = startDate.ToString("yyyy-MM-ddTHH:mm:ss");
             string endDateStr = endDate.ToString("yyyy-MM-ddTHH:mm:ss");
             
-            Log.Info("AlarmReport.Query", $"Querying alarms WHERE LocalTime >= '{startDateStr}' AND LocalTime <= '{endDateStr}'");
-            
-            // Build the query using LocalTime column
             string query = $@"SELECT * FROM AlarmsEventLogger1 
                               WHERE LocalTime >= ""{startDateStr}"" AND LocalTime <= ""{endDateStr}""
                               ORDER BY LocalTime DESC";
             
-            Log.Info("AlarmReport.Query", $"Executing query: {query}");
-            
-            // Execute the query
             Object[,] resultSet;
             String[] header;
             _store.Query(query, out header, out resultSet);
             
             if (resultSet == null || resultSet.GetLength(0) == 0)
             {
-                Log.Info("AlarmReport.Query", "Query returned no results for the date range");
                 return alarmRecords;
             }
             
-            // Log available columns for debugging
-            Log.Info("AlarmReport.Query", $"Query returned columns: {string.Join(", ", header)}");
-            Log.Info("AlarmReport.Query", $"Query returned {resultSet.GetLength(0)} rows");
+            Log.Info("AlarmReport.Query", $"Found {resultSet.GetLength(0)} alarms");
             
-            // Get the current session's locale for localized message column
+            // Determine locale-specific Message column (e.g., Message_it-IT, Message_en-US)
             string currentLocale = GetCurrentLocale();
             string localizedMessageColumn = $"Message_{currentLocale}";
-            Log.Info("AlarmReport.Query", $"Current locale: {currentLocale}, looking for column: {localizedMessageColumn}");
             
-            // Find column indices - try localized message column first, then fallback to generic Message
+            // Find column indices with fallback options
             int localTimeIdx = FindColumnIndex(header, "LocalTime", "Time", "Timestamp", "EventTime");
             int messageIdx = FindColumnIndex(header, localizedMessageColumn);
-            
-            // If localized column not found, try fallback options
             if (messageIdx < 0)
             {
-                Log.Warning("AlarmReport.Query", $"Localized column '{localizedMessageColumn}' not found, trying fallback columns");
                 messageIdx = FindColumnIndex(header, "Message", "Text", "Description", "AlarmMessage");
             }
-            
-            int sourceNameIdx = FindColumnIndex(header, "SourceName", "Source", "DeviceName", "AlarmName");
+            int deviceIdx = FindColumnIndex(header, "Device", "SourceName", "Source", "DeviceName", "AlarmName");
             int sourcePathIdx = FindColumnIndex(header, "SourcePath", "Path", "ObjectPath");
-            
-            Log.Info("AlarmReport.Query", $"Column indices - Time:{localTimeIdx}, Message:{messageIdx} (column: {(messageIdx >= 0 ? header[messageIdx] : "N/A")}), SourceName:{sourceNameIdx}, SourcePath:{sourcePathIdx}");
             
             // Parse results into AlarmRecord objects
             int rowCount = resultSet.GetLength(0);
@@ -299,8 +216,8 @@ public class alarms_report_manager : BaseNetLogic
                     AlarmText = messageIdx >= 0 && resultSet[i, messageIdx] != null 
                         ? resultSet[i, messageIdx].ToString() 
                         : "",
-                    AssociatedDevice = sourceNameIdx >= 0 && resultSet[i, sourceNameIdx] != null 
-                        ? resultSet[i, sourceNameIdx].ToString() 
+                    AssociatedDevice = deviceIdx >= 0 && resultSet[i, deviceIdx] != null 
+                        ? resultSet[i, deviceIdx].ToString() 
                         : (sourcePathIdx >= 0 && resultSet[i, sourcePathIdx] != null 
                             ? resultSet[i, sourcePathIdx].ToString() 
                             : "")
@@ -319,9 +236,7 @@ public class alarms_report_manager : BaseNetLogic
         return alarmRecords;
     }
 
-    /// <summary>
-    /// Creates the MigraDoc document with header and body
-    /// </summary>
+    /// <summary>Creates the MigraDoc document structure.</summary>
     private Document CreateDocument(DateTime startDate, DateTime endDate, List<AlarmRecord> alarmData)
     {
         Document document = new Document();
@@ -329,31 +244,22 @@ public class alarms_report_manager : BaseNetLogic
         document.Info.Author = "FTOptix";
         document.Info.Subject = $"Alarm Report from {startDate:yyyy-MM-dd} to {endDate:yyyy-MM-dd}";
         
-        // Define styles
         DefineStyles(document);
         
-        // Create the main section
         Section section = document.AddSection();
         section.PageSetup.TopMargin = Unit.FromCentimeter(1.5);
         section.PageSetup.BottomMargin = Unit.FromCentimeter(1.5);
         section.PageSetup.LeftMargin = Unit.FromCentimeter(1.5);
         section.PageSetup.RightMargin = Unit.FromCentimeter(1.5);
         
-        // Add Header
         AddReportHeader(section, startDate, endDate);
-        
-        // Add Body (Alarm Table)
         AddReportBody(section, alarmData);
-        
-        // Add Footer with page numbers
         AddReportFooter(section);
         
         return document;
     }
 
-    /// <summary>
-    /// Defines document styles
-    /// </summary>
+    /// <summary>Defines font and paragraph styles for the document.</summary>
     private void DefineStyles(Document document)
     {
         // Modify the Normal style
@@ -385,9 +291,7 @@ public class alarms_report_manager : BaseNetLogic
         style.Font.Size = 9;
     }
 
-    /// <summary>
-    /// Adds the report header section with logos, title, and filter dates
-    /// </summary>
+    /// <summary>Adds header: logos, title, machine name, and filter dates.</summary>
     private void AddReportHeader(Section section, DateTime startDate, DateTime endDate)
     {
         // Create a table for the header layout
@@ -407,11 +311,14 @@ public class alarms_report_manager : BaseNetLogic
         
         // Customer logo (left)
         MigraDocCell logoLeftCell = row1.Cells[0];
-        if (!string.IsNullOrEmpty(_customerLogoPath) && File.Exists(GetAbsolutePath(_customerLogoPath)))
+        string customerLogoFullPath = GetAbsolutePath(_customerLogoPath);
+        Log.Info("AlarmReport.Header", $"Customer logo path: {customerLogoFullPath}, Exists: {File.Exists(customerLogoFullPath)}");
+        
+        if (!string.IsNullOrEmpty(_customerLogoPath) && File.Exists(customerLogoFullPath))
         {
             try
             {
-                var image = logoLeftCell.AddImage(GetAbsolutePath(_customerLogoPath));
+                var image = logoLeftCell.AddImage(customerLogoFullPath);
                 image.Width = Unit.FromCentimeter(3);
                 image.LockAspectRatio = true;
             }
@@ -419,6 +326,10 @@ public class alarms_report_manager : BaseNetLogic
             {
                 Log.Warning("AlarmReport.Header", $"Could not load customer logo: {ex.Message}");
             }
+        }
+        else
+        {
+            Log.Warning("AlarmReport.Header", $"Customer logo not found at: {customerLogoFullPath}");
         }
         
         // Title and info (center)
@@ -434,11 +345,14 @@ public class alarms_report_manager : BaseNetLogic
         // Last logo (right)
         MigraDocCell logoRightCell = row1.Cells[2];
         logoRightCell.Format.Alignment = ParagraphAlignment.Right;
-        if (!string.IsNullOrEmpty(_lastLogoPath) && File.Exists(GetAbsolutePath(_lastLogoPath)))
+        string lastLogoFullPath = GetAbsolutePath(_lastLogoPath);
+        Log.Info("AlarmReport.Header", $"Last logo path: {lastLogoFullPath}, Exists: {File.Exists(lastLogoFullPath)}");
+        
+        if (!string.IsNullOrEmpty(_lastLogoPath) && File.Exists(lastLogoFullPath))
         {
             try
             {
-                var image = logoRightCell.AddImage(GetAbsolutePath(_lastLogoPath));
+                var image = logoRightCell.AddImage(lastLogoFullPath);
                 image.Width = Unit.FromCentimeter(3);
                 image.LockAspectRatio = true;
             }
@@ -446,6 +360,10 @@ public class alarms_report_manager : BaseNetLogic
             {
                 Log.Warning("AlarmReport.Header", $"Could not load Last logo: {ex.Message}");
             }
+        }
+        else
+        {
+            Log.Warning("AlarmReport.Header", $"Last logo not found at: {lastLogoFullPath}");
         }
         
         // Add info box below header
@@ -479,9 +397,7 @@ public class alarms_report_manager : BaseNetLogic
         section.AddParagraph().Format.SpaceAfter = Unit.FromCentimeter(0.5);
     }
 
-    /// <summary>
-    /// Adds the report body with the alarm data table
-    /// </summary>
+    /// <summary>Adds the alarm data table with header and data rows.</summary>
     private void AddReportBody(Section section, List<AlarmRecord> alarmData)
     {
         // Section title
@@ -570,9 +486,7 @@ public class alarms_report_manager : BaseNetLogic
         countParagraph.AddText($"Total records: {alarmData?.Count ?? 0}");
     }
 
-    /// <summary>
-    /// Adds footer with page numbers and generation timestamp
-    /// </summary>
+    /// <summary>Adds footer with page numbers and generation timestamp.</summary>
     private void AddReportFooter(Section section)
     {
         Paragraph footer = section.Footers.Primary.AddParagraph();
@@ -584,9 +498,7 @@ public class alarms_report_manager : BaseNetLogic
         footer.AddNumPagesField();
     }
 
-    /// <summary>
-    /// Renders and saves the document to PDF
-    /// </summary>
+    /// <summary>Renders the MigraDoc document and saves it as PDF.</summary>
     private void SaveDocument(Document document, string outputPath)
     {
         try
@@ -615,47 +527,46 @@ public class alarms_report_manager : BaseNetLogic
         }
     }
 
-    /// <summary>
-    /// Generates the output file path for the report
-    /// </summary>
+    /// <summary>Returns output path: custom OutputPath variable or ProjectFiles/Reports/.</summary>
     private string GetOutputPath(DateTime startDate, DateTime endDate)
     {
-        // Try to get custom output path from NetLogic variable
         string customPath = GetVariableValueOrDefault("OutputPath", "");
-        
         if (!string.IsNullOrEmpty(customPath))
-        {
             return customPath;
-        }
         
-        // Default: save to ProjectFiles/Reports folder
         string projectDir = new ResourceUri(ResourceUri.FromProjectRelativePath("")).Uri;
         string reportsDir = Path.Combine(projectDir, "Reports");
-        string fileName = $"AlarmReport_{startDate:yyyyMMdd}_{endDate:yyyyMMdd}_{DateTime.Now:yyyyMMddHHmmss}.pdf";
-        
+        string fileName = $"AlarmReport_From_{startDate:yyyy-MM-dd_HHmmss}_To_{endDate:yyyy-MM-dd_HHmmss}.pdf";
         return Path.Combine(reportsDir, fileName);
     }
 
-    /// <summary>
-    /// Gets the absolute path from a project-relative or absolute path
-    /// </summary>
+    /// <summary>Converts project-relative path or URI to absolute file path.</summary>
     private string GetAbsolutePath(string path)
     {
         if (string.IsNullOrEmpty(path))
             return "";
-            
+        
+        // Handle URI format (file:///C:/path/...) - convert to regular path
+        if (path.StartsWith("file:///"))
+        {
+            path = path.Substring(8).Replace("/", "\\");
+            Log.Info("AlarmReport.Path", $"Converted URI to path: {path}");
+            return path;
+        }
+        
         // If it's already an absolute path, return it
         if (Path.IsPathRooted(path))
             return path;
         
-        // Otherwise, treat as project-relative
-        string projectDir = new ResourceUri(ResourceUri.FromProjectRelativePath("")).Uri;
+        // Otherwise, treat as project-relative and convert URI to path
+        string projectUri = new ResourceUri(ResourceUri.FromProjectRelativePath("")).Uri;
+        string projectDir = projectUri.StartsWith("file:///") 
+            ? projectUri.Substring(8).Replace("/", "\\") 
+            : projectUri;
         return Path.Combine(projectDir, path);
     }
 
-    /// <summary>
-    /// Gets a variable value from the NetLogic or returns the default value
-    /// </summary>
+    /// <summary>Gets NetLogic variable value or returns default.</summary>
     private string GetVariableValueOrDefault(string variableName, string defaultValue)
     {
         try
@@ -674,9 +585,7 @@ public class alarms_report_manager : BaseNetLogic
         return defaultValue;
     }
 
-    /// <summary>
-    /// Finds a column index by trying multiple possible column names (case-insensitive)
-    /// </summary>
+    /// <summary>Finds column index by trying possible names (case-insensitive).</summary>
     private int FindColumnIndex(string[] header, params string[] possibleNames)
     {
         if (header == null || possibleNames == null)
@@ -695,29 +604,17 @@ public class alarms_report_manager : BaseNetLogic
         return -1;
     }
 
-    /// <summary>
-    /// Gets the current session's ActualLocale (e.g., "it-IT", "en-US")
-    /// Used to determine which localized Message column to read from the database
-    /// </summary>
+    /// <summary>Gets Session.ActualLocaleId for locale-aware Message column selection.</summary>
     private string GetCurrentLocale()
     {
         try
         {
-            // Get the ActualLocaleId from the current session
             string localeId = Session.ActualLocaleId;
             if (!string.IsNullOrEmpty(localeId))
-            {
-                Log.Info("AlarmReport.Locale", $"Session ActualLocaleId: {localeId}");
                 return localeId;
-            }
         }
-        catch (Exception ex)
-        {
-            Log.Warning("AlarmReport.Locale", $"Error getting session locale: {ex.Message}");
-        }
+        catch { }
         
-        // Default fallback
-        Log.Warning("AlarmReport.Locale", "Could not determine locale, using default 'en-US'");
         return "en-US";
     }
 
@@ -726,9 +623,7 @@ public class alarms_report_manager : BaseNetLogic
 
 #region Data Classes
 
-/// <summary>
-/// Represents a single alarm record from the database
-/// </summary>
+/// <summary>Data model for a single alarm record.</summary>
 public class AlarmRecord
 {
     public DateTime ActivationTime { get; set; }

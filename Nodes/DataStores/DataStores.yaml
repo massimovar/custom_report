@@ -26,13 +26,19 @@ Children:
       - Name: Columns
         Type: BaseObjectType
         Children:
+        - Name: ConfirmedState_Id
+          Type: StoreColumn
+          DataType: Boolean
+        - Name: LocalTime
+          Type: StoreColumn
+          DataType: DateTime
+        - Name: Device
+          Type: StoreColumn
+          DataType: String
         - Name: ActiveState_Id
           Type: StoreColumn
           DataType: Boolean
         - Name: AckedState_Id
-          Type: StoreColumn
-          DataType: Boolean
-        - Name: ConfirmedState_Id
           Type: StoreColumn
           DataType: Boolean
         - Name: ConditionName
@@ -41,12 +47,6 @@ Children:
         - Name: EnabledState_Id
           Type: StoreColumn
           DataType: Boolean
-        - Name: SourceName
-          Type: StoreColumn
-          DataType: String
-        - Name: Time
-          Type: StoreColumn
-          DataType: UtcTime
         - Name: 'Message_it-IT'
           Type: StoreColumn
           DataType: String
@@ -56,9 +56,12 @@ Children:
         - Name: Severity
           Type: StoreColumn
           DataType: UInt16
-        - Name: LocalTime
+        - Name: SourceName
           Type: StoreColumn
-          DataType: DateTime
+          DataType: String
+        - Name: Time
+          Type: StoreColumn
+          DataType: UtcTime
   - Class: Reference
     Target: ns=21;i=30
     Direction: Forward
