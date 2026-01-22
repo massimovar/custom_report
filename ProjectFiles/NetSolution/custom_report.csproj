@@ -16,8 +16,8 @@
     <ResolveAssemblyWarnOrErrorOnTargetArchitectureMismatch>None</ResolveAssemblyWarnOrErrorOnTargetArchitectureMismatch>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="PdfSharp.MigraDoc.Standard" Version="1.51.15" />
-    <PackageReference Include="System.Drawing.Common" Version="10.0.2" />
+    <PackageReference Include="PdfSharp.MigraDoc.Standard" Version="1.51.15"/>
+    <PackageReference Include="System.Drawing.Common" Version="10.0.2"/>
   </ItemGroup>
-  <Import Project="custom_report.references" />
+  <Import Project="custom_report.references"/>
 </Project>

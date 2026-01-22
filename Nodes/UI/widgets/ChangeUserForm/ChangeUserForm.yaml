@@ -409,7 +409,7 @@ Children:
           ReferenceType: HasProperty
           ValueRank: OneDimension
           ArrayDimensions: [0]
-          Value: [{"TypeId":{"Id":296},"Body":{"Name":"message","DataType":{"Id":12},"ValueRank":-1,"ArrayDimensions":[],"Description":{"NamespaceIndex":-1,"LocaleId":"","Text":""}}}]
+          Value: [{"TypeId":{"Id":296},"Body":{"Name":"resultCode","DataType":{"Id":6},"ValueRank":-1,"ArrayDimensions":[],"Description":{"NamespaceIndex":-1,"LocaleId":"","Text":""}}}]
       - Class: Method
         Name: SetOutputMessage
         Id: g=fba5260a9bdae6738bf24ebff13288bd
@@ -777,6 +777,9 @@ Children:
               ValueRank: OneDimension
               ArrayDimensions: [0]
               Value: [{"TypeId":{"Id":296},"Body":{"Name":"message","DataType":{"Id":12},"ValueRank":-1,"ArrayDimensions":[],"Description":{"NamespaceIndex":-1,"LocaleId":"","Text":""}}}]
+          - Class: Reference
+            Target: g=558ab9c330ad0263d7e20e9d1094a6be
+            Direction: Forward
       - Name: TopMargin
         Type: BaseVariableType
         DataType: Size
@@ -1342,6 +1345,7 @@ Children:
       Children:
       - Class: Method
         Name: SetOutputMessage
+        Id: g=558ab9c330ad0263d7e20e9d1094a6be
         Children:
         - Name: ns=0;InputArguments
           Type: BaseVariableType
