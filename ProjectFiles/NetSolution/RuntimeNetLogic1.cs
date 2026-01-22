@@ -4,30 +4,26 @@ using UAManagedCore;
 using OpcUa = UAManagedCore.OpcUa;
 using FTOptix.UI;
 using FTOptix.HMIProject;
+using FTOptix.EventLogger;
+using FTOptix.NetLogic;
 using FTOptix.NativeUI;
+using FTOptix.Alarm;
+using FTOptix.SQLiteStore;
+using FTOptix.Store;
 using FTOptix.Retentivity;
 using FTOptix.CoreBase;
 using FTOptix.Core;
-using FTOptix.NetLogic;
-using System.Security.Cryptography;
-using FTOptix.Alarm;
-using FTOptix.EventLogger;
-using FTOptix.Store;
-using FTOptix.SQLiteStore;
 using FTOptix.DataLogger;
 using FTOptix.SerialPort;
 using FTOptix.CommunicationDriver;
 using FTOptix.ODBCStore;
 #endregion
 
-public class setup : BaseNetLogic
+public class RuntimeNetLogic1 : BaseNetLogic
 {
-    private IUAVariable dt;
-
     public override void Start()
     {
-        dt = ((DateAndTime) Owner).ValueVariable;
-        dt.Value = DateTime.Now;
+        // Insert code to be executed when the user-defined logic is started
     }
 
     public override void Stop()

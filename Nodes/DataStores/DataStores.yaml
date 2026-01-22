@@ -62,6 +62,33 @@ Children:
         - Name: Time
           Type: StoreColumn
           DataType: UtcTime
+    - Name: DataLogger1
+      Type: SQLiteStoreTable
+      Children:
+      - Class: Reference
+        Target: ns=19;i=12
+        Direction: Forward
+      - Class: Reference
+        Target: ns=19;i=15
+        Direction: Forward
+      - Class: Reference
+        Target: ns=19;i=21
+        Direction: Forward
+      - Class: Reference
+        Target: ns=19;i=20
+        Direction: Forward
+      - Name: Columns
+        Type: BaseObjectType
+        Children:
+        - Name: Timestamp
+          Type: StoreColumn
+          DataType: UtcTime
+        - Name: LocalTimestamp
+          Type: StoreColumn
+          DataType: DateTime
+        - Name: myVarToLog
+          Type: StoreColumn
+          DataType: Int32
   - Class: Reference
     Target: ns=21;i=30
     Direction: Forward
@@ -120,3 +147,5 @@ Children:
   - Class: Reference
     Target: ns=19;i=59
     Direction: Forward
+  - Name: RuntimeNetLogic1
+    Type: NetLogic

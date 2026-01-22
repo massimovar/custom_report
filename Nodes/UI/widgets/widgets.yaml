@@ -27,3 +27,4 @@ Children:
   - Name: setup
     Type: NetLogic
 - File: ChangeUserForm/ChangeUserForm.yaml
+- File: UserEditor/UserEditor.yaml

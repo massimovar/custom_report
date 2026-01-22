@@ -9,7 +9,7 @@ Children:
   Value: 
    {
     "Type": 12,
-    "Dimensions": [27,3],
+    "Dimensions": [44,3],
     "Body": [
      "","en-US","it-IT",
      "Acked","Acked","Riconosciuto",
@@ -37,6 +37,23 @@ Children:
      "ChangePasswordFormPasswordChangedTooRecentlyMessage","Password changed too recently","Password cambiata troppo recentemente",
      "ChangePasswordFormPasswordTooShortMessage","Password too short","Password troppo corta",
      "ChangePasswordFormUserNotFoundMessage","User not found","Utente non trovato",
-     "ChangePasswordFormPasswordMismatchMessage","Passwords do not match","Le password non coincidono"
+     "ChangePasswordFormPasswordMismatchMessage","Passwords do not match","Le password non coincidono",
+     "Create","Create","Crea",
+     "Groups","Groups","Gruppi",
+     "EmptyUserList","No users in list","Nessun utente nell'elenco",
+     "PasswordChangedTooRecently","Password changed too recently","Password cambiata troppo recentemente",
+     "Roles","Roles","Ruoli",
+     "Delete","Delete","Elimina",
+     "Apply","Apply","Applica",
+     "Cancel","Cancel","Annulla",
+     "Locale:","Locale:","Impostazioni locali:",
+     "CannotCreateUserWithEmptyUsername","Cannot create user with empty username","Impossibile creare un utente con nome utente vuoto",
+     "UnableToGetUsers","Unable to get users","Impossibile ottenere gli utenti",
+     "UsernameAlreadyExists","Username already exists","Nome utente già esistente",
+     "UserNotFound","User not found","Utente non trovato",
+     "PasswordAlreadyUsed","Password already used in the past","Password già utilizzata in passato",
+     "PasswordTooShort","Password too short","Password troppo corta",
+     "UnsupportedOperation","Unsupported operation","Operazione non supportata",
+     "ChangesAppliedSuccessfully","Changes applied successfully","Modifiche applicate correttamente"
     ]
    }

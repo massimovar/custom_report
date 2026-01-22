@@ -10,3 +10,6 @@ Children:
 - Name: al2
   Type: BaseDataVariableType
   DataType: Boolean
+- Name: myVarToLog
+  Type: BaseDataVariableType
+  DataType: Int32

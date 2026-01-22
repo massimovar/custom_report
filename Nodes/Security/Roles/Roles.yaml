@@ -1,3 +1,10 @@
 Name: Roles
 Id: g=168315c4ba704e70bb13e35de715eb03
 Type: RolesCategoryFolder
+Children:
+- Name: able_to_do_X
+  Id: g=bf68f24a7adbb6a037c13f4e9db71c85
+  Type: ns=1;RoleType
+- Name: able_to_do_Y
+  Id: g=9bae9eb4b3c5320536982a3b8d114efb
+  Type: ns=1;RoleType

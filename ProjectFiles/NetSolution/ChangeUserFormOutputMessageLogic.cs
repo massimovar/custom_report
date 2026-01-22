@@ -7,6 +7,10 @@ using OpcUa = UAManagedCore.OpcUa;
 using FTOptix.NetLogic;
 using FTOptix.UI;
 using FTOptix.OPCUAServer;
+using FTOptix.DataLogger;
+using FTOptix.SerialPort;
+using FTOptix.CommunicationDriver;
+using FTOptix.ODBCStore;
 #endregion
 
 public class ChangeUserFormOutputMessageLogic : BaseNetLogic
